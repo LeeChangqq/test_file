@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<main class="uploadContainer">
+    <!--사진업로드 박스-->
+    <section class="upload">
+
+        <!--사진업로드 로고-->
+        <div class="upload-top">
+            <a href="home.html" class="">
+                <img src="/images/logo.jpg" alt="">
+            </a>
+            <p>사진 업로드</p>
+        </div>
+        <!--사진업로드 로고 end-->
+
+        <!--사진업로드 Form-->
+        <form class="upload-form" method="post" onsubmit="upload(event)" enctype="multipart/form-data">
+            <input  type="file" id="file"  onchange="imageChoose(this)" multiple/>
+            <div class="upload-img">
+                <img src="/images/person.jpeg" alt="" id="imageUploadPreview" name="fileName" />
+            </div>
+            <div class="upload-form-detail">
+                <button class="cta blue" id="a">></button>
+            </div>
+            <!--사진설명 + 업로드버튼-->
+            <div class="upload-form-detail">
+                <input type="text" placeholder="사진설명" id="caption" />
+                <button class="cta blue">업로드</button>
+            </div>
+            <!--사진설명end-->
+
+        </form>
+        <!--사진업로드 Form-->
+    </section>
+    <!--사진업로드 박스 end-->
+</main>
+<br/><br/>
+
+</body>
+<script>
+    function imageChoose(obj) {
+        const a = document.getElementById("a");
+        const b = 1;
+        f = obj.files[0];
+        for(let i = 0; i <= 100; i++){
+
+
+            // if (!f.type.match("image.*")) {
+            //     alert("이미지를 등록해야 합니다.");
+            //     return;
+            // }
+
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                    $("#imageUploadPreview").attr("src", e.target.result);
+            }
+            reader.readAsDataURL(f);
+        }
+        location.href = "/save";
+
+    }
+
+
+
+    // function upload(event){
+    //
+    //     event.preventDefault();
+    //     let formData = new FormData();
+    //
+    //     if(!$('#file')[0].files[0]){
+    //         alert("사진을 등록해주세요");
+    //         return false;
+    //     }
+    //
+    //     formData.append("caption",$('#caption').val());
+    //     formData.append("file",$('#file')[0].files[0]);
+    //
+    //     $.ajax({
+    //         type: "post",
+    //         url: `/api/image`,
+    //         data: formData,
+    //         contentType: false,
+    //         processData: false,
+    //         enctype: "multipart/form-data",
+    //         dataType: "text"
+    //     }).done(res=>{
+    //         alert(res);
+    //         location.href = `/user/profile`
+    //     }).fail(error=>{
+    //         console.log(error);
+    //         alert("게시글 등록에 실패하였습니다");
+    //     });
+    //
+    // }
+
+</script>
+</html>
