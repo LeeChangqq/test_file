@@ -5,116 +5,72 @@
     <title>Title</title>
 </head>
 <body>
-<div class="insert">
-    <form method="POST" onsubmit="return false;" enctype="multipart/form-data">
-        <input type="file" onchange="addFile(this);" multiple />
-        <div class="file-list"></div>
-        <div class="upload-img">
-            <img src="/images/person.jpeg" alt="" id="imageUploadPreview" />
-        </div>
-    </form>
-</div>
+<video width="320" height="240" controls>
+    <source src="/20220712_135103.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
 </body>
 <script>
-    var fileNo = 0;
-    var filesArr = new Array();
+    var http = require('http');
+    var url = require('url');
+    var fs = require('fs');
 
-    /* 첨부파일 추가 */
-    function addFile(obj){
-        var maxFileCnt = 5;   // 첨부파일 최대 개수
-        var attFileCnt = document.querySelectorAll('.filebox').length;    // 기존 추가된 첨부파일 개수
-        var remainFileCnt = maxFileCnt - attFileCnt;    // 추가로 첨부가능한 개수
-        var curFileCnt = obj.files.length;  // 현재 선택된 첨부파일 개수
+    var server = http.createServer(function(request,response){
 
-        // 첨부파일 개수 확인
-        if (curFileCnt > remainFileCnt) {
-            alert("첨부파일은 최대 " + maxFileCnt + "개 까지 첨부 가능합니다.");
-        } else {
-            for (const file of obj.files) {
-                // 첨부파일 검증
-                if (validation(file)) {
-                    // 파일 배열에 담기
-                    let reader = new FileReader();
-                    reader.onload = function () {
-                        filesArr.push(file);
-                        reader.onload = (e) => {
-                            $("#imageUploadPreview").attr("src", e.target.result);
-                        }
-                    };
-                    reader.readAsDataURL(file);
+        var parsedUrl = url.parse(request.url);
+        var resource = parsedUrl.pathname;
+        console.log('resource='+resource);
 
-                    // 목록 추가
-                    let htmlData = '';
-                    htmlData += '<div id="file' + fileNo + '" class="filebox">';
-                    htmlData += '   <p class="name">' + reader.readAsDataURL(curFileCnt) + '</p>';
-                    htmlData += '   <a class="delete" onclick="deleteFile(' + fileNo + ');"><i class="far fa-minus-square"></i></a>';
-                    htmlData += '</div>';
-                    $('.file-list').append(htmlData);
-                    fileNo++;
-                } else {
-                    continue;
+        var resourcePath = '.'+resource;
+        console.log('resourcePath='+resourcePath);
+
+        // html 페이지 요청이 들어왔을 경우는 텍스트 파일 처리
+        if(resource.indexOf('/html/') == 0){
+            fs.readFile(resourcePath, 'utf-8', function(error, data) {
+                if(error){
+                    response.writeHead(500, {'Content-Type':'text/html'});
+                    response.end('500 Internal Server '+error);
+                }else{
+                    response.writeHead(200, {'Content-Type':'text/html'});
+                    response.end(data);
                 }
-            }
-        }
-        // 초기화
-        document.querySelector("input[type=file]").value = "";
-    }
+            });
 
-    /* 첨부파일 검증 */
-    function validation(obj){
-        const fileTypes = ['application/pdf', 'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tif', 'application/haansofthwp', 'application/x-hwp'];
-        if (obj.name.length > 100) {
-            alert("파일명이 100자 이상인 파일은 제외되었습니다.");
-            return false;
-        } else if (obj.size > (100 * 1024 * 1024)) {
-            alert("최대 파일 용량인 100MB를 초과한 파일은 제외되었습니다.");
-            return false;
-        } else if (obj.name.lastIndexOf('.') == -1) {
-            alert("확장자가 없는 파일은 제외되었습니다.");
-            return false;
-        } else if (!fileTypes.includes(obj.type)) {
-            alert("첨부가 불가능한 파일은 제외되었습니다.");
-            return false;
-        } else {
-            return true;
-        }
-    }
+        }else if(resource.indexOf('/movie/') == 0){
+            // 1. stream 생성
+            var stream = fs.createReadStream(resourcePath);
+            // 2. 잘게 쪼개진 stream 이 몇번 전송되는지 확인하기 위한 count
+            var count = 0;
+            // 3. 잘게 쪼개진 data를 전송할 수 있으면 data 이벤트 발생
+            stream.on('data', function(data) {
+                count = count + 1;
+                console.log('data count='+count);
+                // 3.1. data 이벤트가 발생되면 해당 data를 클라이언트로 전송
+                response.write(data);
+            });
 
-    /* 첨부파일 삭제 */
-    function deleteFile(num) {
-        document.querySelector("#file" + num).remove();
-        filesArr[num].is_delete = true;
-    }
+            // 4. 데이터 전송이 완료되면 end 이벤트 발생
+            stream.on('end', function () {
+                console.log('end streaming');
+                // 4.1. 클라이언트에 전송완료를 알림
+                response.end();
+            });
 
-    /* 폼 전송 */
-    function submitForm() {
-        // 폼데이터 담기
-        var form = document.querySelector("form");
-        var formData = new FormData(form);
-        for (var i = 0; i < filesArr.length; i++) {
-            // 삭제되지 않은 파일만 폼데이터에 담기
-            if (!filesArr[i].is_delete) {
-                formData.append("attach_file", filesArr[i]);
-            }
+            // 5. 스트림도중 에러 발생시 error 이벤트 발생
+            stream.on('error', function(err) {
+                console.log(err);
+                // 5.2. 클라이언트로 에러메시지를 전달하고 전송완료
+                response.end('500 Internal Server '+err);
+            });
+        }else{
+            response.writeHead(404, {'Content-Type':'text/html'});
+            response.end('404 Page Not Found');
         }
 
-        $.ajax({
-            method: 'POST',
-            url: '/register',
-            dataType: 'json',
-            data: formData,
-            async: true,
-            timeout: 30000,
-            cache: false,
-            headers: {'cache-control': 'no-cache', 'pragma': 'no-cache'},
-            success: function () {
-                alert("파일업로드 성공");
-            },
-            error: function (xhr, desc, err) {
-                alert('에러가 발생 하였습니다.');
-                return;
-            }
-        })
-    }
+    });
+
+    server.listen(80, function(){
+        console.log('Server is running...');
+    });
 </script>
 </html>

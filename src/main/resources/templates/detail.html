@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<p th:text="${image.id}"></p>
+<p><img th:if="${image.fileName == ''}" th:src="@{|/upload/${image.fileName}|}" width="100" height="100" alt=""></p>
+<p><video th:if="${image.fileName}" controls="controls" th:src="@{|/upload/${image.fileName}|}" width="400" class="aaa" autoplay="autoplay" muted="muted" loop="loop"></video></p>
+</body>
+</html>

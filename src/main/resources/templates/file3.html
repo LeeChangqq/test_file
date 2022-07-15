@@ -3,96 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        #video-player{
+            display: none;
+        }
+
+        #video-form{
+            width: 60%;
+        }
+    </style>
 </head>
 <body>
-<main class="uploadContainer">
-    <!--사진업로드 박스-->
-    <section class="upload">
-
-        <!--사진업로드 로고-->
-        <div class="upload-top">
-            <a href="home.html" class="">
-                <img src="/images/logo.jpg" alt="">
-            </a>
-            <p>사진 업로드</p>
-        </div>
-        <!--사진업로드 로고 end-->
-
-        <!--사진업로드 Form-->
-        <form class="upload-form" method="post" onsubmit="return false, upload(event)" enctype="multipart/form-data">
-            <input  type="file" id="file"  onchange="imageChoose(this)" multiple/>
-            <div class="upload-img">
-                <img src="/images/person.jpeg" alt="" id="imageUploadPreview" />
-            </div>
-            <div class="file-list"></div>
-            <!--사진설명 + 업로드버튼-->
-            <div class="upload-form-detail">
-                <input type="text" placeholder="사진설명" id="caption" />
-                <button class="cta blue">업로드</button>
-            </div>
-            <!--사진설명end-->
-
-        </form>
-        <!--사진업로드 Form-->
-    </section>
-    <!--사진업로드 박스 end-->
+<main>
+    <div id="video-list">
+        <header>
+            <h3>Your videos</h3>
+        </header>
+        <ul id="your-videos">
+        </ul>
+    </div>
+    <div id="video-player">
+        <header>
+            <h3 id="now-playing"></h3>
+        </header>
+        <video id="video-screen" width="720px" height="480px" controls></video>
+    </div>
+    <form id="video-form">
+        <fieldset>
+            <legend>Upload a video</legend>
+            <label for="file">Video File</label>
+            <input id="file" name="file" type="file" accept="application/mp4">
+            <label for="name">Video Name</label>
+            <input id="name" name="name" type="text">
+            <button type="submit">Save</button>
+        </fieldset>
+    </form>
 </main>
-<br/><br/>
 </body>
 <script>
-    var fileNo = 0;
-    var filesArr = new Array();
-    function imageChoose(obj) {
-        var maxFileCnt = 5;   // 첨부파일 최대 개수
-        var attFileCnt = document.querySelectorAll('.filebox').length;    // 기존 추가된 첨부파일 개수
-        var remainFileCnt = maxFileCnt - attFileCnt;    // 추가로 첨부가능한 개수
-        var curFileCnt = obj.files.length;  // 현재 선택된 첨부파일 개수
-        let f = obj.files[0];
+    const form = document.querySelector('#video-form');
+    const videoDiv = document.querySelector('#video-player');
+    const videoScreen = document.querySelector('#video-screen');
+    const queryParams = Object.fromEntries(new URLSearchParams(window.location.search));
+    fetch('http://localhost:8081/video/all')
+        .then(result => result.json())
+        .then(result => {
 
-        if (!f.type.match("image.*")) {
-            alert("이미지를 등록해야 합니다.");
-            return;
-        }
+            const myVids = document.querySelector('#your-videos');
+            if(result.length > 0){
+                for(let vid of result){
+                    const li = document.createElement('LI');
+                    const link = document.createElement('A');
+                    link.innerText = vid;
+                    link.href = window.location.origin + window.location.pathname + '?video=' + vid;
+                    li.appendChild(link);
+                    myVids.appendChild(li);
+                }
+            }else{
+                myVids.innerHTML = 'No videos found';
+            }
 
-        let reader = new FileReader();
-        reader.onload = (e) => {
-            $("#imageUploadPreview").attr("src", e.target.result);
-        }
-        reader.readAsDataURL(f);
+        });
+    if(queryParams.video){
+
+        videoScreen.src = `http://localhost:8081/video/${queryParams.video}`;
+        videoDiv.style.display = 'block';
+        document.querySelector('#now-playing')
+            .innerText = 'Now playing ' + queryParams.video;
 
     }
-
-
-
-    function upload(event){
-
-        event.preventDefault();
-        let formData = new FormData();
-
-        if(!$('#file')[0].files[0]){
-            alert("사진을 등록해주세요");
-            return false;
-        }
-
-        formData.append("caption",$('#caption').val());
-        formData.append("file",$('#file')[0].files[0]);
-
-        $.ajax({
-            type: "post",
-            url: `/api/image`,
-            data: formData,
-            contentType: false,
-            processData: false,
-            enctype: "multipart/form-data",
-            dataType: "text"
-        }).done(res=>{
-            alert(res);
-            location.href = `/user/profile`
-        }).fail(error=>{
-            console.log(error);
-            alert("게시글 등록에 실패하였습니다");
+    form.addEventListener('submit', ev => {
+        ev.preventDefault();
+        let data = new FormData(form);
+        fetch('http://localhost:8081/video', {
+            method: 'POST',
+            body: data
+        }).then(result => result.text()).then(_ => {
+            window.location.reload();
         });
 
-    }
+    });
 </script>
 </html>

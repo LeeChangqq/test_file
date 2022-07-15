@@ -26,7 +26,20 @@ public class ImageService {
         }
         imageDTO.setFileName(fileName);
         ImageEntity imageEntity = ImageEntity.toSaveEntity(imageDTO);
+        System.out.println(imageFile);
         imageRepository.save(imageEntity);
     }
- }
 
+    public ImageDTO findById(Long id) {
+        Optional<ImageEntity> optionalImageEntity = imageRepository.findById(id);
+        // 조회수 처리
+        // native sql: update board_table set boardHits=boardHits+1 where id=?
+        if(optionalImageEntity.isPresent()){
+            ImageEntity imageEntity = optionalImageEntity.get();
+            ImageDTO imageDTO = ImageDTO.toImageDTO(imageEntity);
+            return imageDTO;
+        }else {
+            return null;
+        }
+    }
+}

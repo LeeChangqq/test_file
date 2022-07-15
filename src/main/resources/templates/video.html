@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input id="file" type="file">
+<video id="video" style="width: 400px;"></video>
+</body>
+<script>
+    const inputFile = document.getElementById("file");
+    const video = document.getElementById("video");
+
+    inputFile.addEventListener("change", function(){
+            const file = inputFile.files[0];
+            const videourl = URL.createObjectURL(file);
+            video.setAttribute("src", videourl);
+            video.play();
+
+    })
+</script>
+</html>
