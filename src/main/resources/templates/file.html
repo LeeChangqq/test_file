@@ -94,33 +94,23 @@
 
 
                 reader.addEventListener("load", function () {
-
+                    let video = document.createElement("video");
                     num += 1;
 
 
-                    let image = new HTMLVideoElement();
-
-
-                    image.width = "264";
-
-                    image.height = "264";
-
-                    image.title = fileList.name;
-
-                    image.src = this.result;
-
-                    image.id = "aa" + num;
-
-                    image.controls =true;
-
-                    image.autoplay = true;
-
-                    image.className = "aaa";
+                    video.setAttribute("src", this.result);
+                    video.setAttribute("width", "264");
+                    video.setAttribute("height", "264");
+                    video.setAttribute("controls", "controls");
+                    video.setAttribute("autoplay", "autoplay");
+                    video.setAttribute("id", "aa" + num);
+                    video.setAttribute("loop", "loop");
+                    video.setAttribute("class", "aaa");
 
 
                     // @details 이미지 확장자 검사
 
-                    document.getElementById("thumbnailImgs").appendChild(image);
+                    document.getElementById("thumbnailImgs").appendChild(video);
 
                 }, false);
 

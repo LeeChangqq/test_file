@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<form action="/save" method="post" enctype="multipart/form-data">
+    <input type="file" id="upImgFiles" name="imageFile" onsubmit="return false;" onchange="uploadImgPreview(this);"  multiple>
+    <input type="submit" value="버튼">
+</form>
+<div id="thumbnailImgs"></div>
+
+
+<a href="/findById/1">디테일 테스트</a>
+<!--<video src="/video/스타 오프닝.mp4" autoplay="autoplay" controls="controls" width="300"></video>-->
+<button onclick="aa(1)">원본</button>
+<button onclick="aa(2)">흑백</button>
+<button onclick="aa(3)">세피아</button>
+<button onclick="aa(4)">밝게</button>
+<button onclick="aa(5)">조도</button>
+<button onclick="aa(6)">반전</button>
+</body>
+<script>
+    var fileNo = 0;
+    var filesArr = new Array();
+
+    /* 첨부파일 추가 */
+    // function uploadImgPreview1(obj){
+    //     var maxFileCnt = 5;   // 첨부파일 최대 개수
+    //     var attFileCnt = document.querySelectorAll('.filebox').length;    // 기존 추가된 첨부파일 개수
+    //     var remainFileCnt = maxFileCnt - attFileCnt;    // 추가로 첨부가능한 개수
+    //     var curFileCnt = obj.files.length;  // 현재 선택된 첨부파일 개수
+    //
+    //     // 첨부파일 개수 확인
+    //     if (curFileCnt > remainFileCnt) {
+    //         alert("첨부파일은 최대 " + maxFileCnt + "개 까지 첨부 가능합니다.");
+    //     } else {
+    //         for (const file of obj.files) {
+    //             // 첨부파일 검증
+    //             if (validation(file)) {
+    //                 // 파일 배열에 담기
+    //                 var reader = new FileReader();
+    //                 reader.onload = function () {
+    //                     filesArr.push(file);
+    //                 };
+    //                 reader.readAsDataURL(file);
+    //
+    //                 // 목록 추가
+    //                 let htmlData = '';
+    //                 htmlData += '<div id="file' + fileNo + '" class="filebox">';
+    //                 htmlData += '   <p class="name">' + file.name + '</p>';
+    //                 htmlData += '   <a class="delete" onclick="deleteFile(' + fileNo + ');"><i class="far fa-minus-square"></i></a>';
+    //                 htmlData += '</div>';
+    //                 $('.file-list').append(htmlData);
+    //                 fileNo++;
+    //             } else {
+    //                 continue;
+    //             }
+    //         }
+    //     }
+    //     // 초기화
+    //     document.querySelector("input[type=file]").value = "";
+    // }
+
+    /* 첨부파일 검증 */
+
+
+    let num = 0;
+
+    function uploadImgPreview(obj) {
+        var maxFileCnt = 5;   // 첨부파일 최대 개수
+        var attFileCnt = document.querySelectorAll('.filebox').length;    // 기존 추가된 첨부파일 개수
+        var remainFileCnt = maxFileCnt - attFileCnt;    // 추가로 첨부가능한 개수
+        var curFileCnt = obj.files.length;  // 현재 선택된 첨부파일 개수
+
+        // 첨부파일 개수 확인
+        if (curFileCnt > remainFileCnt) {
+            alert("첨부파일은 최대 " + maxFileCnt + "개 까지 첨부 가능합니다.");
+        } else {
+            for (const file of obj.files) {
+                // 첨부파일 검증
+                if (validation(file)) {
+                    // 파일 배열에 담기
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        filesArr.push(file);
+
+                    };
+                    reader.readAsDataURL(file);
+                    fileNo++;
+                } else {
+                    continue;
+                }
+            }
+        }
+        document.getElementById("thumbnailImgs").innerHTML = "";
+
+
+
+
+        // @breif 업로드 파일 읽기
+
+
+        // @breif 업로드 파일 읽기
+
+
+
+    function validation(obj){
+        const fileTypes = ['application/pdf', 'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tif', 'video/mp4' ,'application/haansofthwp', 'application/x-hwp'];
+        if (obj.name.length > 100) {
+            document.querySelector("input[type=file]").value = "";
+            alert("파일명이 100자 이상인 파일은 제외되었습니다.");
+            return false;
+        } else if (obj.size > (100 * 1024 * 1024)) {
+            document.querySelector("input[type=file]").value = "";
+            alert("최대 파일 용량인 100MB를 초과한 파일은 제외되었습니다.");
+            return false;
+        } else if (obj.name.lastIndexOf('.') == -1) {
+            document.querySelector("input[type=file]").value = "";
+            alert("확장자가 없는 파일은 제외되었습니다.");
+            return false;
+        } else if (!fileTypes.includes(obj.type)) {
+            document.querySelector("input[type=file]").value = "";
+            alert("첨부가 불가능한 파일은 제외되었습니다.");
+            return false;
+        } else {
+            let fileList = document.getElementById("upImgFiles").files;
+            console.log(fileList);
+            function readAndPreview(fileList) {
+                let reader = new FileReader();
+                let image = new Image();
+                let video = document.createElement("video");
+                // @breif 이미지 확장자 검사
+                reader.addEventListener("load", function () {
+                    if (/\.(jpe?g|png|gif|mp4)$/i.test(fileList.name)) {
+
+                        num += 1;
+                        if (/\.(jpe?g|png|gif)$/i.test(fileList.name)) {
+
+
+
+                            image.width = "264";
+
+                            image.height = "264";
+
+                            // image.title = fileList.name;
+
+                            image.src = this.result;
+
+                            image.id = "aa" + num;
+
+                            image.className = "aaa";
+
+                            document.getElementById("thumbnailImgs").appendChild(image);
+
+                            // @details 이미지 확장자 검사
+
+                        } else if (/\.(jpe?g|mp4)$/i.test(fileList.name)) {
+
+                            video.setAttribute("src", this.result);
+                            video.setAttribute("width", "264");
+                            video.setAttribute("height", "264");
+                            video.setAttribute("controls", "controls");
+                            video.setAttribute("autoplay", "autoplay");
+                            video.setAttribute("id", "aa" + num);
+                            video.setAttribute("loop", "loop");
+                            video.setAttribute("class", "aaa");
+                            // @details 이미지 확장자 검사
+                            document.getElementById("thumbnailImgs").appendChild(video);
+
+                        }
+
+                    }
+                    // console.log(fileList);
+                    // @details readAsDataURL( )을 통해 파일의 URL을 읽어온다.
+
+
+                });
+
+                // else if (/\.(jpe?g|mp4)$/i.test(fileList.name)) {
+                //
+                //     // let reader = new FileReader();
+                //
+                //     reader.addEventListener("load", function () {
+                //
+                //         num += 1;
+                //
+                //
+                //         let video = document.createElement("video");
+                //         video.setAttribute("src", this.result);
+                //         video.setAttribute("width", "200");
+                //         video.setAttribute("height", "200");
+                //         video.setAttribute("controls", "controls");
+                //         video.setAttribute("autoplay","autoplay");
+                //         video.setAttribute("id","aa"+num);
+                //         video.setAttribute("loop","loop");
+                //         video.setAttribute("class","aaa");
+                //         video.play();
+                //         // @details 이미지 확장자 검사
+                //
+                //         document.getElementById("thumbnailImgs").appendChild(video);
+                //     }, false);
+
+                // if (fileList) {
+                //     reader.readAsDataURL(fileList);
+                // }
+                if (fileList) {
+                    reader.readAsDataURL(fileList);
+                }
+            }
+
+            console.log(fileList);
+
+            if (fileList) {
+
+
+                // @details readAndPreview() 함수를 forEach문을통한 반복 수행
+
+                [].forEach.call(fileList, readAndPreview);
+
+            }
+            document.querySelector("input[type=file]").value = '';
+            return true;
+            }
+
+        }
+
+    }
+    function aa(a) {
+        let zone = document.getElementsByClassName("aaa");
+        for (let i = 0; i <= 10; i++) {
+
+            if (a == 1) {
+                zone[i].style.filter = ''
+            } else if (a == 2) {
+                zone[i].style.filter = 'grayscale(100)'
+            } else if (a == 3) {
+                zone[i].style.filter = 'sepia(1)'
+            } else if (a == 4) {
+                zone[i].style.filter = 'brightness(1.3)'
+            } else if (a == 5) {
+                zone[i].style.filter = 'contrast(1.3)'
+            } else if (a == 6) {
+                zone[i].style.filter = 'invert(1)'
+            }
+        }
+
+    }
+
+</script>
+</html>
