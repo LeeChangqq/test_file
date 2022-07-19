@@ -35,7 +35,7 @@ public class HomeController {
     private final ImageService imageService;
     @GetMapping("/")
     public String index () {
-        return "q";
+        return "w";
     }
 
     @PostMapping("/save")
