@@ -1,192 +1,64 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+
+    <title>Document</title>
+
+
+
+    <script>
+        let zone=document.getElementById("test")
+        function reset(){
+            test.style.filter=''
+        }
+        function gray(){
+            test.style.filter='grayscale(100)'
+        }
+        function sepia(){
+            test.style.filter='sepia(1)'
+        }
+        function brightness(){
+            test.style.filter='brightness(1.3)'
+        }
+
+        function contrast(){
+            test.style.filter='contrast(1.3)'
+        }
+        function invert(){
+            test.style.filter='invert(1)'
+        }
+
+
+
+
+
+
+    </script>
+
+
 </head>
 <body>
-<form action="/save" method="post" enctype="multipart/form-data">
-    <input type="file" id="upImgFiles" name="imageFile" onChange="uploadImgPreview()"  multiple>
-<!--    <video controls="controls" src="/video/1657680268330_20220712_135103.mp4" width="400" class="aaa" autoplay="autoplay"></video>-->
-<!--    <img src="D:./springboot_img/1656313845331_오렌지.jpg">-->
+<img id="test" src="https://cdn.imweb.me/upload/S201910012ff964777e0e3/62f9a36ea3cea.jpg" height="480" width="350" >
+<!-- <img id="test" src="https://cdn.imweb.me/upload/S201910012ff964777e0e3/62f9a36ea3cea.jpg" height="480" width="350" style="filter:grayscale(100)"> -->
 
-
-    <input type="submit" value="버튼">
-</form>
-<div id="thumbnailImgs"></div>
-<button onclick="aa(1)">원본</button>
-<button onclick="aa(2)">흑백</button>
-<button onclick="aa(3)">세피아</button>
-<button onclick="aa(4)">밝게</button>
-<button onclick="aa(5)">조도</button>
-<button onclick="aa(6)">반전</button>
+<button onclick="reset()">원본</button>
+<button onclick="gray()">흑백</button>
+<button onclick="sepia()">세피아</button>
+<button onclick="brightness()">밝게</button>
+<button onclick="contrast()">조도</button>
+<button onclick="invert()">반전</button>
 
 <button id="froala-editor">&#8986</button>
-<a href="/findById/1">디테일 테스트</a>
+
+
+
+
 </body>
-<script>
-    let num = 0;
-    function uploadImgPreview() {
-        document.getElementById("thumbnailImgs").innerHTML = "";
-
-
-        // @breif 업로드 파일 읽기
-
-        let fileList = document.getElementById("upImgFiles").files;
-
-
-        // @breif 업로드 파일 읽기
-
-        function readAndPreview(fileList) {
-
-
-            // @breif 이미지 확장자 검사
-
-            if (/\.(jpe?g|png|gif)$/i.test(fileList.name)) {
-
-
-                let reader = new FileReader();
-
-
-                reader.addEventListener("load", function () {
-
-                    num += 1;
-
-
-                    let image = new Image();
-
-
-                    image.width = "264";
-
-                    image.height = "264";
-
-                    image.title = fileList.name;
-
-                    image.src = this.result;
-
-                    image.id = "aa" + num;
-
-
-                    image.className = "aaa";
-
-
-                    // @details 이미지 확장자 검사
-
-                    document.getElementById("thumbnailImgs").appendChild(image);
-
-                }, false);
-
-
-                // @details readAsDataURL( )을 통해 파일의 URL을 읽어온다.
-
-                if (fileList) {
-
-                    reader.readAsDataURL(fileList);
-
-                }
-
-            }
-
-            else if (/\.(jpe?g|mp4)$/i.test(fileList.name)) {
-                let reader = new FileReader();
-
-
-                reader.addEventListener("load", function () {
-                    let video = document.createElement("video");
-                    num += 1;
-
-
-                    video.setAttribute("src", this.result);
-                    video.setAttribute("width", "264");
-                    video.setAttribute("height", "264");
-                    video.setAttribute("controls", "controls");
-                    video.setAttribute("autoplay", "autoplay");
-                    video.setAttribute("id", "aa" + num);
-                    video.setAttribute("loop", "loop");
-                    video.setAttribute("class", "aaa");
-
-
-                    // @details 이미지 확장자 검사
-
-                    document.getElementById("thumbnailImgs").appendChild(video);
-
-                }, false);
-
-                if (fileList) {
-
-                    reader.readAsDataURL(fileList);
-
-                }
-
-
-            }
-
-        }
-
-            if (fileList) {
-
-
-                // @details readAndPreview() 함수를 forEach문을통한 반복 수행
-
-                [].forEach.call(fileList, readAndPreview);
-
-            }
-
-        }
-
-        function aa(a) {
-            let zone = document.getElementsByClassName("aaa");
-            for (let i = 0; i <= 10; i++) {
-
-                if (a == 1) {
-                    zone[i].style.filter = ''
-                } else if (a == 2) {
-                    zone[i].style.filter = 'grayscale(100)'
-                } else if (a == 3) {
-                    zone[i].style.filter = 'sepia(1)'
-                } else if (a == 4) {
-                    zone[i].style.filter = 'brightness(1.3)'
-                } else if (a == 5) {
-                    zone[i].style.filter = 'contrast(1.3)'
-                } else if (a == 6) {
-                    zone[i].style.filter = 'invert(1)'
-                }
-            }
-
-    }
-
-
-
-    // function aa2(a) {
-    //     let image = document.getElementById("aa" + a);
-    //     function
-    //     if() {
-    //
-    //     }
-    // }
-
-
-    // let zone = document.getElementById("test").innerHTML;
-    // function reset(){
-    //     zone.style.filter=''
-    // }
-    // function gray(){
-    //     zone.style.filter='grayscale(100)'
-    // }
-    // function sepia(){
-    //     zone.style.filter='sepia(1)'
-    // }
-    // function brightness(){
-    //     zone.style.filter='brightness(1.3)'
-    // }
-    //
-    // function contrast(){
-    //     zone.style.filter='contrast(1.3)'
-    // }
-    // function invert(){
-    //     zone.style.filter='invert(1)'
-    // }
-</script>
 </html>

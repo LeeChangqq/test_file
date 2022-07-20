@@ -11,7 +11,10 @@
     <input type="submit" value="버튼">
 </form>
 <div id="thumbnailImgs"></div>
+<input type="button" onclick="qw()" value="aa">
 
+<a href="/findById/1">디테일 테스트</a>
+<!--<video src="/video/스타 오프닝.mp4" autoplay="autoplay" controls="controls" width="300"></video>-->
 <button onclick="reset()">원본</button>
 <button onclick="gray()">흑백</button>
 <button onclick="sepia()">세피아</button>
@@ -20,6 +23,7 @@
 <button onclick="invert()">반전</button>
 </body>
 <script>
+    var fileNo = 0;
     var filesArr = new Array();
     let num = 0;
 
@@ -34,8 +38,9 @@
             alert("첨부파일은 최대 " + maxFileCnt + "개 까지 첨부 가능합니다.");
             document.querySelector("input[type=file]").value = "";
         } else {
-            const file = document.getElementById("upImgFiles");
-            if (file.files[0] == null){
+            const file = document.getElementById("upImgFiles").files;
+            console.log(file);
+            if (file[0] == null){
                 alert("파일이 없습니다.");
             } else {
                 for (const f of obj.files){
@@ -48,12 +53,12 @@
                 }
 
             }
-            document.getElementById("thumbnailImgs").innerHTML = "";
-
+            document.querySelector("[id=thumbnailImgs]").innerHTML = null;
+            num = 0;
         }
 
         function validation(obj){
-            const ww = new Array(obj);
+            const ww = new Array();
             console.log(ww);
             const fileTypes = ['application/pdf', 'image/gif', 'image/jpeg', 'image/png', 'image/bmp', 'image/tif', 'video/mp4' ,'application/haansofthwp', 'application/x-hwp'];
             const fileTypes2 = ['image/gif', 'image/jpeg', 'image/png'];
@@ -66,8 +71,7 @@
             }
             else if (obj.size > (100 * 1024 * 1024)) {
                 document.querySelector("[type=file]").value = "";
-                const qwe = document.getElementById("thumbnailImgs");
-                qwe.style.visibility = "hidden";
+                document.getElementById("thumbnailImgs").innerHTML = "hidden";
                 alert("최대 파일 용량인 100MB를 초과한 파일은 제외되었습니다.");
                 return false;
             }
@@ -114,6 +118,7 @@
                         video.setAttribute("id", "aaa" + num);
                         video.setAttribute("loop", "loop");
                         video.setAttribute("class", "aaa");
+                        // @details 이미지 확장자 검사
                         document.getElementById("thumbnailImgs").appendChild(video);
                     }
 
@@ -128,7 +133,37 @@
         }
 
     }
+    function qw (obj) {
+        let a = "<input type='file'>"
 
+        // <form action="/save" method="post" encType="multipart/form-data">
+        //     <input type="file" id="upImgFiles" name="imageFile" onSubmit="return false;"
+        //            onChange="uploadImgPreview(this);" multiple>
+        //         <input type="submit" value="버튼">
+        // </form>
+        // <div id="thumbnailImgs"></div>
+    }
+
+    // function aa(a) {
+    //     let zone = document.getElementsByClassName("aaa");
+    //     for (let i = 0; i <= 10; i++) {
+    //
+    //         if (a == 1) {
+    //             zone[i].style.filter = ''
+    //         } else if (a == 2) {
+    //             zone[i].style.filter = 'grayscale(100)'
+    //         } else if (a == 3) {
+    //             zone[i].style.filter = 'sepia(1)'
+    //         } else if (a == 4) {
+    //             zone[i].style.filter = 'brightness(1.3)'
+    //         } else if (a == 5) {
+    //             zone[i].style.filter = 'contrast(1.3)'
+    //         } else if (a == 6) {
+    //             zone[i].style.filter = 'invert(1)'
+    //         }
+    //     }
+    //
+    // }
     function reset(){
         aaa1.style.filter=''
     }
